@@ -16,7 +16,7 @@ class Menu // This is essentially the default E.showMenu, but deobfuscated, made
 		options.y1 = mod(options.y1, bC.getHeight());
 		options.y2 = mod(options.y2, bC.getHeight());
 
-		this.selectedIndex = -1;
+		this.selectedIndex = 0;
 		this.isEditing = false;
 	}
 
@@ -165,7 +165,8 @@ class Menu // This is essentially the default E.showMenu, but deobfuscated, made
 		if (Pip.removeSubmenu) Pip.removeSubmenu();
 		
 		bC.clear(1);
-		this.move(0); // trigger onselect and draw
+		if (this.selectedRow.onselect) this.selectedRow.onselect(this); // TODO: I don't like this
+		this.draw();
 
 		const handler = this.handleKnob1.bind(this);
 		Pip.addListener("knob1", handler);

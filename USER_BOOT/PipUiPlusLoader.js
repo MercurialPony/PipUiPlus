@@ -1,14 +1,31 @@
 function specialSubmenu()
 {
-	eval(fs.readFile("USER_BOOT/PipUiPlus/Special.min.js"));
+	// Avoid loading the bulk of the app into memory permanently,
+	// and instead emulate flash memory by loading from SD only when needed
+	eval(fs.readFile("USER_BOOT/PIP_UI_PLUS/Special.min.js"));
 }
 
-function alterProperties(object, propertyMap, renameMap)
+function perksSubmenu()
 {
-	return Object.keys(object).reduce((o, k) =>
-		(o[renameMap[k] || k] = object[k], Object.assign(o, propertyMap[k])),
-		{}
-	);
+	eval(fs.readFile("USER_BOOT/PIP_UI_PLUS/Perks.min.js"));
 }
 
-MODEINFO[MODE.STAT].submenu = alterProperties(MODEINFO[MODE.STAT].submenu, { "STATUS": { "SPECIAL": specialSubmenu } }, { "CONNECT": "CONN", "DIAGNOSTICS": "DIAG" });
+// deletes all properties in an object, renames, and re-inserts them while inserting new properties at specified points
+function alterObject(object, renameMap, propertyMap)
+{
+	for (const entry of Object.entries(object))
+	{
+		const key = entry[0];
+		const value = entry[1];
+
+		delete object[key];
+		object[renameMap[key] || key] = value;
+		Object.assign(object, propertyMap[key]);
+	}
+}
+
+alterObject(
+	MODEINFO[MODE.STAT].submenu,
+	{ "CONNECT": "CONN", "DIAGNOSTICS": "DIAG" },
+	{ "STATUS": { "SPECIAL": specialSubmenu, "PERKS": perksSubmenu } },
+);

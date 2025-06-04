@@ -27,7 +27,7 @@ function deleteSafely(path)
 function deleteRecursively(path)
 {
 	readdirSafely(path).forEach(n => deleteRecursively(path + "/" + n));
-	fs.unlink(path);
+	deleteSafely(path);
 };
 
 // Clean up the previous app files (this should be a temporary addition)
